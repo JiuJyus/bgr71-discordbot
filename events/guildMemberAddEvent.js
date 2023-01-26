@@ -7,7 +7,9 @@ const {
     TextInputStyle,
     ButtonBuilder,
 } = require("discord.js");
-
+/**
+ * При входе на дискорд сервер бот должен создать отдельный чат с ним где базово опросить его
+ **/
 module.exports = (member) => {
     const { guild } = member;
     const { channels } = guild;
@@ -18,15 +20,15 @@ module.exports = (member) => {
             type: ChannelType.GuildText,
             permissionOverwrites: [
                 {
-                    id: guild.roles.everyone,
-                    deny: [
+                    id: member.id,
+                    allow: [
                         PermissionFlagsBits.ViewChannel,
                         PermissionFlagsBits.SendMessages,
                     ],
                 },
                 {
-                    id: member.id,
-                    allow: [
+                    id: guild.roles.everyone,
+                    deny: [
                         PermissionFlagsBits.ViewChannel,
                         PermissionFlagsBits.SendMessages,
                     ],
@@ -34,10 +36,17 @@ module.exports = (member) => {
             ],
         })
         .then((sm) => {
-            global.chats.push(sm);
+            global.db.run(
+                "insert into users(disid,guldid,chid,name,nickname,action) values(?,?,?,?,?,?)",
+                [member.id, guild.id, sm.id, "", "", 0],
+                (err) => console.log("ERROR INSERT", err)
+            );
+            console.log(`${member.tag} add to db`);
+
             sm.send({
-                content: `${member}`,
+                content: `${member}, Добро пожаловать я бот канала напиши свой игровой ник`,
             });
+
             console.log("add channel");
         })
         .catch((em) => {
