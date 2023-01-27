@@ -40,11 +40,20 @@ module.exports = (message) => {
                             message.member.guild.roles.cache.find(
                                 (role) => role.name === "✅рядовой✅"
                             ),
-                            message.member.guild.roles.cache.find(
-                                (role) => role.name === "полководец"
-                            ),
                         ]);
-
+                        sqlD = `DELETE FROM users where chid=?`;
+                        global.db.run(sqlD, [row.chid], (err) => {
+                            console.log("err", err);
+                        });
+                        message.guild.channels.cache
+                            .find(
+                                (channel) =>
+                                    channel.name === "welcome" &&
+                                    channel.type === 0
+                            )
+                            .send(
+                                `Пользователь: ${message.member}\nИмя: ${message.content}\nНик:${row.nickname}`
+                            );
                         message.channel.delete("не актуально");
                     }
                 );

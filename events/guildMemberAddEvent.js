@@ -24,6 +24,7 @@ module.exports = (member) => {
                     allow: [
                         PermissionFlagsBits.ViewChannel,
                         PermissionFlagsBits.SendMessages,
+                        PermissionFlagsBits.ReadMessageHistory,
                     ],
                 },
                 {
@@ -36,6 +37,18 @@ module.exports = (member) => {
             ],
         })
         .then((sm) => {
+            sm.setParent(
+                sm.guild.channels.cache.find(
+                    (channel) =>
+                        channel.name === "welcome" && channel.type === 4
+                ),
+                { lockPermissions: false }
+            );
+            sm.permissionOverwrites.create(member.id, {
+                ReadMessageHistory: true,
+                ViewChannel: true,
+                SendMessages: true,
+            });
             global.db.run(
                 "insert into users(disid,guldid,chid,name,nickname,action) values(?,?,?,?,?,?)",
                 [member.id, guild.id, sm.id, "", "", 0],
