@@ -5,60 +5,74 @@ module.exports = (message) => {
     const author = message.author.tag;
     if (message.member.id === process.env.APPID) return;
     console.log(message.member.id, message.guildId, message.channelId);
-    sql = `SELECT * FROM users WHERE ((disid=? and guldid=?) and chid=?) `;
-    global.db.get(
-        sql,
-        [message.member.id, message.guildId, message.channelId],
+
+    global.db.selectUser(
+        message.member.id,
+        message.guildId,
+        message.channelId,
         (err, row) => {
-            if (err) return console.log("select error", err);
-            sqlU = `UPDATE users SET action=?,name=?, nickname=?`;
-            if (!row) return;
-            if (row.action === 0) {
-                global.db.run(sqlU, [1, row.name, message.content], (err) => {
-                    if (err) return console.log(err);
-                    console.log(
-                        `${message.member.tag} successful set name ${message.content}`
-                    );
-                    message.reply("Отлично, как тебя зовут?");
-                });
-            } else if (row.action === 1) {
-                global.db.run(
-                    sqlU,
-                    [2, message.content, row.nickname],
+            if (err) return console.log("[ERROR SELECT]", err);
+            if (!row) return console.log("WARNING ROW IS EMPTY");
+            if (row.action === 0)
+                global.db.updateUser(
+                    message.channelId,
+                    1,
+                    row.name,
+                    message.content,
+                    (err) => {
+                        if (err) return console.log(err);
+                        console.log(
+                            `${message.member.tag} successful set name ${message.content}`
+                        );
+                        message.reply("Отлично, как тебя зовут?");
+                    }
+                );
+            else if (row.action === 1) {
+                global.db.updateUser(
+                    message.channelId,
+                    2,
+                    message.content,
+                    row.nickname,
                     (err) => {
                         if (err) return console.log(err);
                         console.log(
                             `${message.member.tag} successful set nickname ${message.content}`
-                        );
-                        message.reply(
-                            `Добро пожаловать ${message.content} (${row.nickname})`
                         );
                         message.member.setNickname(
                             `${row.nickname} (${message.content})`
                         );
                         message.member.roles.add([
                             message.member.guild.roles.cache.find(
-                                (role) => role.name === "✅рядовой✅"
+                                (role) => role.name === process.env.DEFAULT_ROLE
                             ),
                         ]);
-                        sqlD = `DELETE FROM users where chid=?`;
-                        global.db.run(sqlD, [row.chid], (err) => {
-                            console.log("err", err);
+                        message.reply(
+                            `Добро пожаловать ${message.content} (${row.nickname})`
+                        );
+                        global.db.deleteUser(row.chid, (err) => {
+                            if (err)
+                                console.log(
+                                    "ERROR CHANNEL DELETE FROM DATABASE",
+                                    err
+                                );
                         });
-                        message.guild.channels.cache
-                            .find(
-                                (channel) =>
-                                    channel.name === "welcome" &&
-                                    channel.type === 0
-                            )
-                            .send(
-                                `Пользователь: ${message.member}\nИмя: ${message.content}\nНик:${row.nickname}`
-                            );
                         message.channel.delete("не актуально");
+                        const officerChannel =
+                            message.guild.channels.cache.find(
+                                (channel) =>
+                                    channel.name ===
+                                        process.env.DEFAULT_CHANNEL_ADD &&
+                                    channel.type === 0
+                            );
+                        if (officerChannel)
+                            officerChannel.send(
+                                `Прибыл новый пользователь: ${message.member}\nИмя: ${message.content}\nНик: ${row.nickname}`
+                            );
                     }
                 );
             }
         }
     );
+
     console.log(`[${createdAt}] [${author}] [${message.content}]`);
 };
