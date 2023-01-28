@@ -3,7 +3,7 @@ const path = require("node:path");
 const colors = require("colors");
 const eventsPath = path.join(__dirname);
 
-const mode = process.argv.length >= 3 ? process.argv[2] : "dev";
+const mode = process.argv.length >= 3 ? process.argv[2] : "prod";
 
 !fs.readdirSync(eventsPath).includes(mode)
     ? console.error(

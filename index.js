@@ -1,8 +1,8 @@
 require("./env");
+
 global.appPerfomance = {
     startupTime: 0,
 };
-global.chats = [];
 
 const { Client, Events, GatewayIntentBits } = require("discord.js");
 const client = new Client({
@@ -19,6 +19,7 @@ const {
     messageCreateEvent,
     guildMemberAddEvent,
 } = require("./events");
+
 global.db = require("./db");
 
 client.login(process.env.TOKEN);
