@@ -46,9 +46,7 @@ module.exports = (message) => {
                                 (role) => role.name === process.env.DEFAULT_ROLE
                             ),
                         ]);
-                        message.reply(
-                            `Добро пожаловать ${message.content} (${row.nickname})`
-                        );
+
                         global.db.deleteUser(row.chid, (err) => {
                             if (err)
                                 console.log(
