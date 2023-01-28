@@ -18,6 +18,7 @@ const {
     readyEvent,
     messageCreateEvent,
     guildMemberAddEvent,
+    guildMemberRemoveEvent,
 } = require("./events");
 
 global.db = require("./db");
@@ -29,3 +30,5 @@ client.on(Events.ClientReady, readyEvent);
 client.on(Events.MessageCreate, messageCreateEvent);
 
 client.on(Events.GuildMemberAdd, guildMemberAddEvent);
+
+client.on(Events.GuildMemberRemove, guildMemberRemoveEvent);
