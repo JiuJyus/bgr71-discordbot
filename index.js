@@ -1,5 +1,4 @@
-require("dotenv").config();
-
+require("./env");
 global.appPerfomance = {
     startupTime: 0,
 };
