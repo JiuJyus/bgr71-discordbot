@@ -1,4 +1,4 @@
-const { Guild } = require("discord.js");
+const { inlineCode } = require("discord.js");
 
 module.exports = (message) => {
     const createdAt = message.createdAt.toLocaleString();
@@ -64,7 +64,11 @@ module.exports = (message) => {
                             );
                         if (officerChannel)
                             officerChannel.send(
-                                `Прибыл новый пользователь: ${message.member}\nИмя: ${message.content}\nНик: ${row.nickname}`
+                                `Прибыл новый пользователь: ${
+                                    message.member
+                                }\nИмя: ${inlineCode(
+                                    message.content
+                                )}\nНик: ${inlineCode(row.nickname)}`
                             );
                     }
                 );
