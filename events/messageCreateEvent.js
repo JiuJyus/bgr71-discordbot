@@ -3,7 +3,12 @@ const { inlineCode } = require("discord.js");
 module.exports = (message) => {
     const createdAt = message.createdAt.toLocaleString();
     const author = message.author.tag;
-    if (message.member.id === process.env.APPID) return;
+    if (
+        message.member.id &&
+        !message.member.user.bot &&
+        message.member.id === process.env.APPID
+    )
+        return;
     console.log(message.member.id, message.guildId, message.channelId);
 
     global.db.selectUser(
