@@ -1,4 +1,4 @@
-module.exports = (member) => {
+module.exports = async (member) => {
     const { guild } = member;
     const { channels } = guild;
     console.log(

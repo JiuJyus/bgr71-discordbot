@@ -5,7 +5,7 @@ const userAuth = require("../utils/userAuth");
 /**
  * При входе на дискорд сервер бот должен создать отдельный чат с ним где базово опросить его
  **/
-module.exports = (member) => {
+module.exports = async (member) => {
     const { guild } = member;
     const { channels } = guild;
 

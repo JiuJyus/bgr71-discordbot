@@ -1,6 +1,6 @@
 const { inlineCode } = require("discord.js");
 
-module.exports = (message) => {
+module.exports = async (message) => {
     const createdAt = message.createdAt.toLocaleString();
     const author = message.author.tag;
     if (
